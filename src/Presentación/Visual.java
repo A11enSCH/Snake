@@ -17,12 +17,18 @@ import Lógica.Movimiento;
 public class Visual extends JFrame {
 	private Movimiento movimiento;
 	private JPanel pElementos;
+	private JPanel pFondo;
 	private PCuadricula pCuadricula;
 	private JButton bNuevoJuego;
 	private JLabel lMejor_puntaje;
 	private JLabel lPuntos;
 	private PCuadricula2 pCuadricula2;
-
+	
+	public final static int IZQ = 37;
+	public final static int ARR = 38;
+	public final static int DER = 39;
+	public final static int ABA = 40;
+	
 	public Visual() {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(700, 700);
@@ -48,21 +54,20 @@ public class Visual extends JFrame {
 		this.add(this.pElementos, BorderLayout.NORTH);
 
 		// Panel de la cuadricula del juego
-		this.pCuadricula2 = new PCuadricula2(500, 16);
-		this.pCuadricula = new PCuadricula(500, 16);
+		this.movimiento = new Movimiento(500, 16);
+		this.pCuadricula2 = new PCuadricula2(550, 16, movimiento);
+		this.pCuadricula = new PCuadricula(550, 16);
 
 		// Panel de fondo
-		JPanel fondoPanel = new JPanel(null); // Usar null layout para posicionar los paneles manualmente
-		fondoPanel.add(this.pCuadricula2);
-		fondoPanel.add(this.pCuadricula);
+		this.pFondo = new JPanel(null);
+		this.pFondo.add(this.pCuadricula2);
+		this.pFondo.add(this.pCuadricula);
 
 		this.pCuadricula2.setBounds(10, 10, 600, 600);
 		this.pCuadricula2.setOpaque(false);
 		this.pCuadricula.setBounds(10, 10, 600, 600);
-
-		this.add(fondoPanel, BorderLayout.CENTER);
-
-		this.pCuadricula.addKeyListener(new KeyListener() {
+		
+		this.pCuadricula2.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {
 			}
@@ -73,25 +78,53 @@ public class Visual extends JFrame {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				teclaOprimida(e);
+				try {
+					teclaOprimida(e);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
+
+		this.add(pFondo, BorderLayout.CENTER);
 
 		this.setVisible(true);
 		this.pCuadricula.setFocusable(true);
 		this.pCuadricula.requestFocusInWindow();
 	}
 
-	protected void teclaOprimida(KeyEvent e) {
-		// TODO Auto-generated method stub
+	protected void teclaOprimida(KeyEvent e) throws Exception {
+		if(e.getKeyCode() == DER) {
+			movimiento.cambioDireccion("Der");
+		}else if(e.getKeyCode() == IZQ) {
+			movimiento.cambioDireccion("Izq");
+		}else if(e.getKeyCode() == ARR) {
+			movimiento.cambioDireccion("Arr");
+		}else if(e.getKeyCode() == ABA) {
+			movimiento.cambioDireccion("aba");
+		}
+		movimiento.mover();
+		pCuadricula2.repaint();
 	}
 
 	protected void nuevoJuego() {
-		this.movimiento = new Movimiento();
-		//this.pCuadricula.setJ2048(this.movimiento);
-		this.pCuadricula.repaint();
-		this.pCuadricula.setFocusable(true);
-		this.pCuadricula.requestFocusInWindow();
+		this.movimiento = new Movimiento(500, 16);
+		this.pCuadricula2 = new PCuadricula2(550, 16, movimiento);
+		this.pCuadricula2.setFocusable(true);
+		this.pCuadricula2.requestFocusInWindow();
+
+		// Limpiar el panel de fondo y agregar las nuevas instancias
+		this.pFondo.removeAll();
+		this.pFondo.add(this.pCuadricula2);
+		this.pFondo.add(this.pCuadricula);
+
+		this.pCuadricula2.setBounds(10, 10, 600, 600);
+		this.pCuadricula2.setOpaque(false);
+		this.pCuadricula.setBounds(10, 10, 600, 600);
+
+		this.pFondo.revalidate();
+		this.pFondo.repaint();
 	}
 
 	public static void main(String[] args) {
