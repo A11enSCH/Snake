@@ -59,7 +59,7 @@ public class Visual extends JFrame {
 
         this.setVisible(true);
 
-        // Iniciar el bucle de actualización
+        // Actualizacion
         new Thread(() -> {
             while (true) {
                 try {
